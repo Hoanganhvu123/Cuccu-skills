@@ -2,6 +2,9 @@
   <img src="https://img.shields.io/badge/Workflows-8-blue?style=for-the-badge" />
   <img src="https://img.shields.io/badge/Skills-30+-green?style=for-the-badge" />
   <img src="https://img.shields.io/badge/Pipelines-4-purple?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Sub--Agents-5-red?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Hooks-3-orange?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Commands-5-cyan?style=for-the-badge" />
   <img src="https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge" />
 </p>
 
@@ -336,6 +339,95 @@ Scaffold (10min) → PRD (15min) → Evaluate (5min) → Code (2-4h) → Audit (
 ```
 
 ---
+
+## 🔷 Claude Code Native Integration (`.claude/`)
+
+> **NEW:** Full native Claude Code integration with **sub-agents**, **hooks**, and **slash commands**. Works alongside the `.agent/` system — no conflicts.
+
+### Directory Structure
+
+```
+.claude/
+├── agents/                      ← 🤖 5 specialized sub-agents
+│   ├── orchestrator.md          ← Master pipeline router (Opus model)
+│   ├── security-reviewer.md     ← Read-only security scanner (Sonnet)
+│   ├── qa-gatekeeper.md         ← 4-dimension audit enforcer (Sonnet)
+│   ├── tdd-executor.md          ← Red-Green-Refactor executor
+│   └── frontend-designer.md    ← Premium UI/UX designer (5 skills loaded)
+├── commands/                    ← ⚡ Slash commands
+│   ├── autopilot.md             ← /autopilot [task]
+│   ├── hotfix.md                ← /hotfix [bug]
+│   ├── audit.md                 ← /audit [scope]
+│   ├── scaffold.md              ← /scaffold [name]
+│   └── refactor.md              ← /refactor [scope]
+├── hooks/                       ← 🔒 Automated enforcement
+│   ├── protect-files.ps1        ← Blocks edits to .env, lockfiles
+│   └── verify-completion.ps1    ← Pre-stop verification (secrets scan)
+└── settings.json                ← Hook configuration
+```
+
+### Sub-Agents — Isolated Specialists
+
+Each agent runs in its **own context window** with dedicated tool access and preloaded skills:
+
+| Agent | Model | Tools | Skills Loaded | Purpose |
+|---|---|---|---|---|
+| 🟣 `orchestrator` | Opus | All + Agent spawning | context-window-management | Routes pipelines, coordinates agents |
+| 🔴 `security-reviewer` | Sonnet | Read-only | security-review, secret-scanning | CANNOT edit files. Scan only. |
+| 🟠 `qa-gatekeeper` | Sonnet | Read-only | quality-playbook, react-doctor | 4-dimension audit with scoring |
+| 🟢 `tdd-executor` | Inherit | Read + Write + Edit | tdd, full-output-enforcement | Write tests FIRST, then implement |
+| 🔵 `frontend-designer` | Inherit | Read + Write + Edit | ui-ux-pro-max + 4 more | Premium UI that never looks generic |
+
+**Why sub-agents matter:** Instead of one AI "pretending" to be a security expert while also writing code, each role gets an **isolated context** with **enforced tool restrictions**. The security-reviewer literally _cannot_ edit files.
+
+### Hooks — Automated Enforcement
+
+Hooks run **automatically** at lifecycle events. No need to "remind" the AI:
+
+| Hook | Event | What It Does |
+|---|---|---|
+| `protect-files.ps1` | `PreToolUse (Edit\|Write)` | **BLOCKS** edits to `.env`, `package-lock.json`, `.git/`, `CLAUDE.md` |
+| `verify-completion.ps1` | `Stop` | Scans for hardcoded secrets in git diff. BLOCKS completion if found. |
+| Desktop Notification | `Notification` | Windows popup when AI needs your input |
+
+### Slash Commands — Quick Pipeline Access
+
+| Command | What Happens |
+|---|---|
+| `/autopilot [task]` | Auto-classifies intent → routes to correct pipeline |
+| `/hotfix [bug]` | 15-minute emergency fix protocol |
+| `/audit [scope]` | Manual 4-dimension QA scan |
+| `/scaffold [name]` | New project bootstrap (10 min) |
+| `/refactor [scope]` | Safe incremental refactoring |
+
+### `.agent/` vs `.claude/` — Both Work Together
+
+| Convention | Used By | Status |
+|---|---|---|
+| `.agent/` | GitHub Copilot, Gemini, generic agents | ✅ Active |
+| `.claude/` | Claude Code (Anthropic) native | ✅ Active |
+
+Both directories live in the same repo. The `.agent/` system provides **workflows and skills** (prompt-based). The `.claude/` system adds **enforcement** (hooks, tool restrictions, isolated agents).
+
+---
+
+## 🏗️ Maturity Model
+
+```
+Level 0: Raw Prompts         ← "Hey AI, build me X"
+Level 1: Constitution        ← AGENTS.md / CLAUDE.md         ✅
+Level 2: Skills              ← 30+ reusable skill modules    ✅
+Level 3: Workflows           ← 8 structured pipelines        ✅
+Level 4: Slash Commands      ← /autopilot, /hotfix, /audit   ✅ NEW
+Level 5: Sub-Agents          ← Specialized isolated workers  ✅ NEW
+Level 6: Hooks               ← Automated enforcement gates   ✅ NEW
+Level 7: Agent Teams         ← Multi-agent parallel work     🔜 Next
+```
+
+---
+
+
+
 
 ## 📊 File Conventions
 
