@@ -1,0 +1,82 @@
+# Autonomous Workflow Configuration
+# This file defines the full A-Z workflow for the autonomous launcher
+
+version: "1.0"
+name: "Autonomous Full Workflow"
+description: "One-button workflow from idea to production"
+
+# Mode detection: auto, creation, or evolution
+mode: auto
+
+# Output paths (override Superpowers defaults)
+output:
+  # Design document pattern: {date}, {topic}, {slug} variables available
+  design_doc_dir: "docs/plans/designs"
+  design_doc_pattern: "{date}-{slug}-design.md"
+
+  # Implementation plan pattern
+  plan_doc_dir: "docs/plans"
+  plan_doc_pattern: "{date}-{slug}-plan.md"
+
+  # Ensure these directories exist
+  create_dirs: true
+
+# Git-based mode detection rules (used when mode: auto)
+git:
+  auto_detect: true
+  rules:
+    # If no commits yet → creation mode (starting from scratch)
+    - if: "! git rev-parse HEAD > /dev/null 2>&1"
+      mode: "creation"
+
+    # If there are uncommitted changes → evolution mode (adding to existing)
+    - if: "git diff --name-only | grep -q ."
+      mode: "evolution"
+
+    # Default: evolution if repo has commits
+    - mode: "evolution"
+
+# Workflow stages (skills to invoke in sequence)
+workflow:
+  # Always start with brainstorming (handles both creation & evolution)
+  - stage: "design"
+    skill: "brainstorming"
+    prompt: "Start autonomous workflow. Design the complete solution with full specifications."
+    save_to: "{output.design_doc_dir}/{output.design_doc_pattern}"
+
+  # After design approval, create implementation plan
+  - stage: "planning"
+    skill: "writing-plans"
+    prompt: "Create detailed implementation plan for the approved design. Break into bite-sized tasks (2-5 min each) with exact file paths."
+    save_to: "{output.plan_doc_dir}/{output.plan_doc_pattern}"
+    requires: "design_approved"
+
+  # Execute plan with subagents
+  - stage: "execution"
+    skill: "subagent-driven-development"
+    prompt: "Execute the implementation plan task-by-task. Each task: TDD cycle → code review → commit."
+    requires: "plan_created"
+
+  # Final review and merge decision
+  - stage: "completion"
+    skill: "finishing-a-development-branch"
+    prompt: "Verify all tests pass, review changes, and prepare for merge or PR."
+    requires: "execution_complete"
+
+# Checkbox tracking (for progress monitoring)
+tracking:
+  plan_checkbox_pattern: "- \\[ \\]"  # incomplete
+  plan_checkbox_done: "- \\[x\\]"     # complete
+  progress_file: "docs/plans/.workflow-progress.json"
+
+# Options
+options:
+  # If true, will ask for confirmation before each stage
+  confirm_each_stage: false
+
+  # If true, creates git worktree for isolation
+  use_worktree: true
+  worktree_branch_prefix: "autonomous/"
+
+  # Maximum autonomous iterations before asking for review
+  max_auto_iterations: 10

@@ -1,0 +1,59 @@
+{
+  "version": "1.0",
+  "name": "Autonomous Full Workflow",
+  "description": "One-button workflow from idea to production",
+  "mode": "auto",
+  "output": {
+    "design_doc_dir": "docs/plans/designs",
+    "design_doc_pattern": "{date}-{slug}-design.md",
+    "plan_doc_dir": "docs/plans",
+    "plan_doc_pattern": "{date}-{slug}-plan.md",
+    "create_dirs": true
+  },
+  "git": {
+    "auto_detect": true,
+    "rules": [
+      { "if": "! git rev-parse HEAD > /dev/null 2>&1", "mode": "creation" },
+      { "if": "git diff --name-only | grep -q .", "mode": "evolution" },
+      { "mode": "evolution" }
+    ]
+  },
+  "workflow": [
+    {
+      "stage": "design",
+      "skill": "brainstorming",
+      "prompt": "Start autonomous workflow. Design the complete solution with full specifications.",
+      "save_to": "{output.design_doc_dir}/{output.design_doc_pattern}"
+    },
+    {
+      "stage": "planning",
+      "skill": "writing-plans",
+      "prompt": "Create detailed implementation plan for the approved design. Break into bite-sized tasks (2-5 min each) with exact file paths.",
+      "save_to": "{output.plan_doc_dir}/{output.plan_doc_pattern}",
+      "requires": "design_approved"
+    },
+    {
+      "stage": "execution",
+      "skill": "subagent-driven-development",
+      "prompt": "Execute the implementation plan task-by-task. Each task: TDD cycle → code review → commit.",
+      "requires": "plan_created"
+    },
+    {
+      "stage": "completion",
+      "skill": "finishing-a-development-branch",
+      "prompt": "Verify all tests pass, review changes, and prepare for merge or PR.",
+      "requires": "execution_complete"
+    }
+  ],
+  "tracking": {
+    "plan_checkbox_pattern": "- \\[ \\]",
+    "plan_checkbox_done": "- \\[x\\]",
+    "progress_file": "docs/plans/.workflow-progress.json"
+  },
+  "options": {
+    "confirm_each_stage": false,
+    "use_worktree": true,
+    "worktree_branch_prefix": "autonomous/",
+    "max_auto_iterations": 10
+  }
+}
