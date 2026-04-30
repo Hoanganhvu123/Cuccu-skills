@@ -59,7 +59,7 @@ This project operationalizes that insight into a **complete development system**
 
 ---
 
-## ⚙️ The 8 Workflows
+## ⚙️ The 8 Workflows + Autonomous Launcher
 
 ### System Architecture
 
@@ -98,6 +98,32 @@ This project operationalizes that insight into a **complete development system**
     │  Routes: A=Feature, B=Hotfix, C=New, D=Refactor │
     └──────────────────────────────────────────────┘
 ```
+
+---
+
+## 🚀 Autonomous Launcher — One-Button Full Workflow
+
+**NEW!** The `/go` command runs the complete A-Z pipeline automatically with zero manual intervention.
+
+| Feature | Description |
+|---|---|
+| **One-Command** | `/go` or `/autonomous-launch` triggers full pipeline |
+| **Auto Mode Detection** | Git-based: `creation` (new project) vs `evolution` (existing codebase) |
+| **Custom Output** | Saves docs to `docs/plans/` (respects your folder structure) |
+| **Full TDD** | Enforces red-green-refactor throughout |
+| **Checkbox Tracking** | Progress tracked in real-time in plan file |
+| **Worktree Isolation** | Optional isolated branches for parallel development |
+
+**Workflow:**
+```
+/go → brainstorming → writing-plans → subagent-driven-development → finishing-a-development-branch
+```
+
+**Configuration:** `.agent/workflows/autonomous.json` (fully customizable)
+
+**Setup:** See `SETUP_AUTONOMOUS.md` for quick start guide
+
+**Agent Docs:** `AUTONOMOUS_LAUNCHER.md` (orchestrator internals)
 
 ---
 
@@ -324,12 +350,13 @@ git submodule add https://github.com/Hoanganhvu123/Cuccu-skills.git .agent
 
 | Command | What Happens |
 |---|---|
-| `"Autopilot: Build [feature]"` | God Mode — full autonomous pipeline |
-| `"Scaffold: [project name]"` | Bootstrap new project from scratch |
-| `"Idea: [concept]"` | Capture and classify an idea |
-| `"Hotfix: [bug description]"` | Emergency production fix (≤15 min) |
-| `"Refactor: [scope]"` | Safe tech debt cleanup |
-| `"Audit Epic [XX]"` | Manual QA gatekeeper scan |
+| `/autopilot [task]` | God Mode — auto-classifies and routes to correct pipeline |
+| `/go` or `/autonomous-launch` | **One-button full A-Z workflow** (design → plan → build → finish) |
+| `/scaffold [name]` | Bootstrap new project from scratch |
+| `/idea [concept]` | Capture and classify an idea |
+| `/hotfix [bug]` | Emergency production fix (≤15 min) |
+| `/refactor [scope]` | Safe tech debt cleanup |
+| `/audit [scope]` | Manual 4-dimension QA scan |
 
 ### Speed Run: Idea → Production
 
@@ -395,10 +422,28 @@ Hooks run **automatically** at lifecycle events. No need to "remind" the AI:
 | Command | What Happens |
 |---|---|
 | `/autopilot [task]` | Auto-classifies intent → routes to correct pipeline |
+| `/go` or `/autonomous-launch` | **One-button full A-Z workflow** (design → plan → build → finish) |
 | `/hotfix [bug]` | 15-minute emergency fix protocol |
 | `/audit [scope]` | Manual 4-dimension QA scan |
 | `/scaffold [name]` | New project bootstrap (10 min) |
 | `/refactor [scope]` | Safe incremental refactoring |
+
+### Autonomous Launcher — The Simple Way
+
+The `/go` command is backed by the `autonomous-launcher` agent and provides the simplest possible interface: **type your idea and let the AI handle everything** from design to production-ready code.
+
+**How it works:**
+1. Auto-detects mode (new project vs existing codebase)
+2. Runs full Superpowers pipeline (brainstorm → plan → build → finish)
+3. Saves docs to your `docs/plans/` folder
+4. Tracks progress with checkboxes in real-time
+5. Optional worktree isolation for parallel development
+
+**Configuration:** `.agent/workflows/autonomous.json` (fully customizable)
+
+**Setup:** See `SETUP_AUTONOMOUS.md` for quick start
+
+**Agent Docs:** `AUTONOMOUS_LAUNCHER.md`
 
 ### `.agent/` vs `.claude/` — Both Work Together
 
@@ -418,7 +463,7 @@ Level 0: Raw Prompts         ← "Hey AI, build me X"
 Level 1: Constitution        ← AGENTS.md / CLAUDE.md         ✅
 Level 2: Skills              ← 30+ reusable skill modules    ✅
 Level 3: Workflows           ← 8 structured pipelines        ✅
-Level 4: Slash Commands      ← /autopilot, /hotfix, /audit   ✅ NEW
+Level 4: Slash Commands      ← /go, /autopilot, /hotfix, /audit   ✅ NEW
 Level 5: Sub-Agents          ← Specialized isolated workers  ✅ NEW
 Level 6: Hooks               ← Automated enforcement gates   ✅ NEW
 Level 7: Agent Teams         ← Multi-agent parallel work     🔜 Next
